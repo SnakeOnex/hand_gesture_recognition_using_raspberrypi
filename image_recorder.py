@@ -19,6 +19,8 @@ def crop_img(img, final_width):
     return img_cropped
 
 
+
+
 # params
 img_size = 64
 recognition_ratio = 3
@@ -51,6 +53,10 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
    
     img_cropped = crop_img(img_resized, img_size)
     print(img_cropped.shape)
+    img_gray = img_gray.astype(float) / 255. 
+    print(img_gray.dtype)   
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    cv2.putText(img_gray, "NOT RECORDING",(150, 25),font, 0.5, (0,155.0,), 2, cv2.LINE_AA)
     cv2.imshow("frame", img_gray)
     key = cv2.waitKey(1) & 0xFF
 
@@ -69,6 +75,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
+    cv2.putText(img_gray, "RECORDING",(150, 25),font, 0.5, (255,0,0), 2, cv2.LINE_AA)
     cv2.imshow("frame", img_gray)
     key = cv2.waitKey(1) & 0xFF
     rawCapture.truncate(0)
