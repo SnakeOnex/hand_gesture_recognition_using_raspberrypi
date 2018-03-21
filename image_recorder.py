@@ -1,4 +1,4 @@
-# import stuff
+# importing stuff
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
@@ -47,11 +47,11 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     # print(img_gray.shape)
    
     img_resized = resize_img(img_gray, img_size) 
-    # print(img_resized.shape) 
+     #print(img_resized.shape) 
    
     img_cropped = crop_img(img_resized, img_size)
     print(img_cropped.shape)
-    cv2.imshow("frame", img_cropped)
+    cv2.imshow("frame", img_gray)
     key = cv2.waitKey(1) & 0xFF
 
     rawCapture.truncate(0)
@@ -59,7 +59,20 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     if key == ord('q'):
         break
 
+print("KABEL")
+
+# capture frames from the camera
+for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+    
+    img = frame.array
+    
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
+    cv2.imshow("frame", img_gray)
+    key = cv2.waitKey(1) & 0xFF
+    rawCapture.truncate(0)
 
+    if key == ord('q'):
+        break
 
