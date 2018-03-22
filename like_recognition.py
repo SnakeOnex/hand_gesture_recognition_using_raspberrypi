@@ -2,3 +2,192 @@
 import tensorflow as tf
 import numpy as np
 import cv2
+import math
+import os
+import time
+from scipy import misc
+
+# loading data params
+PATH = 'data2/'
+
+
+
+
+
+# conv net hyper parameters
+
+img_size = 64
+
+img_size_flat = img_size * img_size
+
+img_shape = (img_size, img_size)
+
+num_channels = 1
+num_classes = 2
+
+# conv layer 1
+filter_size1 = 3
+num_filters1 =  8
+
+# conv layer 2 
+filter_size2 = 3
+num_filters2 = 16
+
+
+fc_layer = 128
+
+lr = 0.001
+def create_conv_layer(input, num_input_channels, filter_size, num_filters, use_pooling=True):
+    
+    filter_shape = [filter_size, filter_size, num_input_channels, num_filters]
+    
+    print(filter_shape)
+    
+    weights = tf.Variable(tf.truncated_normal(shape=filter_shape))
+    
+    biases = tf.Variable(tf.constant(0.05, shape=[num_filters]))
+    
+    layer = tf.nn.conv2d(input=input,
+                        filter=weights,
+                        strides=[1, 1, 1, 1],
+                         padding='SAME')
+    
+    layer += biases
+    
+    if use_pooling:
+        
+        layer = tf.nn.max_pool(value=layer,
+                              ksize=[1, 2, 2, 1],
+                               strides=[1, 2, 2, 1],
+                               padding='SAME')
+        
+    layer = tf.nn.relu(layer)
+    
+    return layer, weights
+
+
+def create_fully_connected(input,
+                          num_inputs,
+                          num_outputs,
+                          use_relu=True):
+    
+    weights = tf.Variable(tf.truncated_normal(shape=[num_inputs, num_outputs]))
+    
+    biases = tf.Variable(tf.constant(0.05, shape=[num_outputs]))
+    
+    layer = tf.matmul(input, weights) + biases
+    
+    if use_relu:
+        layer = tf.nn.relu(layer)
+        
+    return layer
+
+def flatten_layer(layer):
+    
+    layer_shape = layer.get_shape()
+    
+    num_features = layer_shape[1:4].num_elements()
+    
+    layer_flat = tf.reshape(layer, [-1, num_features])
+    
+    return layer_flat, num_features
+
+
+x = tf.placeholder(tf.float32, shape=[None, img_size, img_size, num_channels], name='x')
+y = tf.placeholder(tf.float32, shape=[None, num_classes], name='y')
+
+
+
+layer_conv1, weights_conv1 = create_conv_layer(input=x,
+                                              num_input_channels=num_channels,
+                                              filter_size=filter_size1,
+                                              num_filters=num_filters1,
+                                              use_pooling=True)
+
+layer_conv2, weights_conv2 = create_conv_layer(input=layer_conv1,
+                                              num_input_channels=num_filters1,
+                                              filter_size=filter_size2,
+                                              num_filters=num_filters2,
+                                              use_pooling=True)
+
+layer_flat, num_features = flatten_layer(layer_conv2)
+print("Num features: " + str(num_features))
+
+
+fc_layer1 = create_fully_connected(input=layer_flat,
+                                  num_inputs=num_features,
+                                  num_outputs=fc_layer,
+                                  use_relu=True)
+
+fc_layer2 = create_fully_connected(input=fc_layer1,
+                                  num_inputs=fc_layer,
+                                  num_outputs=num_classes,
+                                  use_relu=False)
+
+y_pred = tf.nn.softmax(fc_layer2)
+y_pred_class = tf.argmax(y_pred, axis=1)
+
+cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=fc_layer2, labels=y)
+
+cost = tf.reduce_mean(cross_entropy)
+
+optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(cost)
+
+saver = tf.train.Saver()
+
+save_dir = 'checkpoints/2_simple/'
+
+session = tf.Session()
+
+session.run(tf.global_variables_initializer())
+
+saver.restore(sess=session, save_path=save_dir)
+
+
+def resize_image(img, img_size):
+    y = math.floor((img_size/img.shape[0])*img.shape[1])
+    resized = cv2.resize(img, (y, img_size))
+    return resized
+
+def crop_edges(img, final_width):
+    left_border = math.floor((img.shape[1] - final_width) / 2)
+    right_border = final_width + left_border
+#     print(left_border)
+#     print(right_border)
+    img_cropped = img[:, left_border:right_border]
+    return img_cropped
+
+def preprocess_images(X):
+    X = (X / 255 * 0.99) + 0.01
+    return X
+
+
+image_size = 64
+recognition_ratio = 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# data preprocessing
+def preprocess_image(X):
+    X = (X / 255 * 0.99) + 0.01
+    return np.float32(X).reshape(-1, img_size, img_size, num_channels)
+
+def one_hot(nums):
+    output = np.eye(num_classes)[nums]
+    return np.squueze(output)
+
+
+    
+
