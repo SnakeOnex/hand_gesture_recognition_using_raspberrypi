@@ -28,7 +28,7 @@ res = (320, 240)
 fps = 30
 PATH = 'data/test/'
 img_name = 'kapr'
-start_index = 100
+start_index = 150
 img_count = 200
 
 
@@ -87,11 +87,12 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     cv2.imshow("frame", img_gray)
     key = cv2.waitKey(1) & 0xFF
     rawCapture.truncate(0)
+    scaled_index = 0
     if i % capture_ratio == 0:
         scaled_index = int(i - (i / capture_ratio) * (capture_ratio-1) + start_index)
         print(PATH + img_name + str(scaled_index) + ".jpg")
         cv2.imwrite(PATH + img_name + str(scaled_index) +  ".jpg", img_gray)
     i += 1
-    if key == ord('q') or i == (img_count + start_index) * capture_ratio:
+    if key == ord('q') or scaled_index == (img_count + start_index):
         break
 
