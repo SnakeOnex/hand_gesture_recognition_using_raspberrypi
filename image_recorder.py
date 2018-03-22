@@ -23,9 +23,13 @@ def crop_img(img, final_width):
 
 # params
 img_size = 64
-recognition_ratio = 3
+capture_ratio = 3
 res = (320, 240)
 fps = 30
+PATH = 'data/test/'
+img_name = 'kapr'
+start_index = 100
+img_count = 200
 
 
 # initialize the cam
@@ -70,6 +74,8 @@ print("KABEL")
 
 # capture frames from the camera
 # second sequence
+
+i = 0
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
     
     img = frame.array
@@ -81,8 +87,11 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     cv2.imshow("frame", img_gray)
     key = cv2.waitKey(1) & 0xFF
     rawCapture.truncate(0)
-    cv2.imwrite(PATH + img_name + count)
-
-    if key == ord('q'):
+    if i % capture_ratio == 0:
+        scaled_index = int(i - (i / capture_ratio) * (capture_ratio-1) + start_index)
+        print(PATH + img_name + str(scaled_index) + ".jpg")
+        cv2.imwrite(PATH + img_name + str(scaled_index) +  ".jpg", img_gray)
+    i += 1
+    if key == ord('q') or i == (img_count + start_index) * capture_ratio:
         break
 
