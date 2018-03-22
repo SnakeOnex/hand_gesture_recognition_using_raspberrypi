@@ -38,6 +38,7 @@ rawCapture = PiRGBArray(camera, size=res)
 time.sleep(0.1)
 
 # capture frames from the camera
+# first sequence
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
 
     # current frame as numpy array 
@@ -68,6 +69,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 print("KABEL")
 
 # capture frames from the camera
+# second sequence
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
     
     img = frame.array
@@ -75,10 +77,11 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
-    cv2.putText(img_gray, "RECORDING",(150, 25),font, 0.5, (255,0,0), 2, cv2.LINE_AA)
+    cv2.putText(img_gray, "RECORDING",(150, 25),font, 0.5, (0,255,0), 2, cv2.LINE_AA)
     cv2.imshow("frame", img_gray)
     key = cv2.waitKey(1) & 0xFF
     rawCapture.truncate(0)
+    cv2.imwrite(PATH + img_name + count)
 
     if key == ord('q'):
         break
