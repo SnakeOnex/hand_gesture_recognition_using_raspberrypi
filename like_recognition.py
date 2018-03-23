@@ -144,12 +144,12 @@ session.run(tf.global_variables_initializer())
 saver.restore(sess=session, save_path=save_dir)
 
 
-def resize_image(img, img_size):
+def resize_img(img, img_size):
     y = math.floor((img_size/img.shape[0])*img.shape[1])
     resized = cv2.resize(img, (y, img_size))
     return resized
 
-def crop_edges(img, final_width):
+def crop_img(img, final_width):
     left_border = math.floor((img.shape[1] - final_width) / 2)
     right_border = final_width + left_border
 #     print(left_border)
@@ -157,37 +157,72 @@ def crop_edges(img, final_width):
     img_cropped = img[:, left_border:right_border]
     return img_cropped
 
-def preprocess_images(X):
+def preprocess_imgs(X):
     X = (X / 255 * 0.99) + 0.01
     return X
 
 
+
+
+from picamera.array import PiRGBArray
+from picamera import PiCamera
+
+
 image_size = 64
-recognition_ratio = 3
+recognition_ratio = 10
+res = (320, 240)
+fps = 30
 
 
+# initialize the cam
+camera = PiCamera()
+camera.resolution = res
+camera.framerate = fps
+rawCapture = PiRGBArray(camera, size=res)
 
+# allow the camera to warmup
+time.sleep(0.1)
 
+# capture frames from the camera
+for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
 
+    # current frame as numpy array
+    img = frame.array
 
-
-
-
-
-
-
-
-
-
-# data preprocessing
-def preprocess_image(X):
-    X = (X / 255 * 0.99) + 0.01
-    return np.float32(X).reshape(-1, img_size, img_size, num_channels)
-
-def one_hot(nums):
-    output = np.eye(num_classes)[nums]
-    return np.squueze(output)
-
-
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
+    img_resized = resize_img(img_gray, img_size)
+
+    img_cropped = crop_img(img_resized, img_size)
+
+    img_shapened = img_cropped.reshape(1, img_size, img_size, 1) 
+
+    img_scaled = preprocess_imgs(img_shapened)
+
+    pred = session.run(y_pred_class, feed_dict={x: img_scaled})
+
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    msg = ""
+    if pred[0] == 0:
+        msg = "Like"
+    else:
+        msg = "Dislike"
+
+    cv2.putText(img, msg, (50, 50), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
+
+    cv2.imshow('RAW', img)
+    key = cv2.waitKey(1) & 0xFF 
+    rawCapture.truncate(0)
+
+    if key == ord('q'):
+        print("FJDASLFJASLFJDASLF")
+        break
+
+
+
+
+
+
+
+
 
