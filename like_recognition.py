@@ -149,6 +149,21 @@ def resize_img(img, img_size):
     resized = cv2.resize(img, (y, img_size))
     return resized
 
+ 
+def crop_img_hor(img, final_width):
+    left_border = math.floor((img.shape[1] - final_width) / 2)
+    right_border = final_width + left_border
+    img_cropped = img[:, left_border:right_border]
+    return img_cropped
+
+def crop_img_ver(img, final_width):
+    top_border = math.floor((img.shape[0] - final_width) / 2)
+    bottom_border = final_width + top_border
+    img_cropped = img[top_border: bottom_border, :]
+    return img_cropped
+
+
+
 def crop_img(img, final_width):
     left_border = math.floor((img.shape[1] - final_width) / 2)
     right_border = final_width + left_border
@@ -191,26 +206,32 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
-    img_resized = resize_img(img_gray, img_size)
+#    img_resized = resize_img(img_gray, img_size)
 
-    img_cropped = crop_img(img_resized, img_size)
-
-    img_shapened = img_cropped.reshape(1, img_size, img_size, 1) 
+    img_cropped = crop_img_hor(img_gray, 190)
+    img_cropped = crop_img_ver(img_cropped, 190)
+    img_resized = resize_img(img_cropped, img_size)
+    print("RESIZED: " + str(img_resized.shape))
+    img_shapened = img_resized.reshape(1, img_size, img_size, 1) 
 
     img_scaled = preprocess_imgs(img_shapened)
 
-    pred = session.run(y_pred_class, feed_dict={x: img_scaled})
-
+    pred_cls = session.run(y_pred_class, feed_dict={x: img_scaled})
+    pred = session.run(y_pred, feed_dict={x: img_scaled})
     font = cv2.FONT_HERSHEY_SIMPLEX
     msg = ""
-    if pred[0] == 0:
+    if pred_cls[0] == 0:
         msg = "Like"
     else:
         msg = "Dislike"
 
-    cv2.putText(img, msg, (50, 50), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
+   # cv2.putText(img, msg, (50, 50), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
-    cv2.imshow('RAW', img)
+    cv2.putText(img_cropped, msg, (10,10), font, 0.5, (0, 255, 0), 2, cv2.LINE_AA)
+    
+    print(pred)
+    #cv2.imshow('RAW', img)
+    cv2.imshow('RAW', img_cropped)
     key = cv2.waitKey(1) & 0xFF 
     rawCapture.truncate(0)
 
