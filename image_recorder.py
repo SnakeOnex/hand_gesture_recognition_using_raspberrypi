@@ -74,7 +74,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
    
     print("CROPPED SHAPE: " + str(img_cropped.shape))
     font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(img_cropped, "NOT RECORDING",(120, 5),font, 0.5, (0,155.0,), 2, cv2.LINE_AA)
+    cv2.putText(img_cropped, "NOT RECORDING",(40, 30),font, 0.4, (0,155.0,), 2, cv2.LINE_AA)
     cv2.imshow("frame", img_cropped)
     key = cv2.waitKey(1) & 0xFF
 
@@ -98,7 +98,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     img_cropped = crop_img_hor(img_gray, cropped_size)
     img_cropped = crop_img_ver(img_cropped, cropped_size)
 
-    cv2.putText(img_cropped, "RECORDING",(120, 5),font, 0.5, (0,255,0), 2, cv2.LINE_AA)
+    cv2.putText(img_cropped, "RECORDING",(40, 30),font, 0.4, (0,255,0), 2, cv2.LINE_AA)
     cv2.imshow("frame", img_cropped)
     key = cv2.waitKey(1) & 0xFF
     rawCapture.truncate(0)
@@ -107,6 +107,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
         scaled_index = int(i - (i / capture_ratio) * (capture_ratio-1) + start_index)
         print(PATH + img_name + str(scaled_index) + ".jpg")
         img_resized = resize_img(img_cropped, img_size) 
+        print("RESIZED SHAPE: " + str(img_resized.shape))
         cv2.imwrite(PATH + img_name + str(scaled_index) +  ".jpg", img_resized)
     i += 1
     if key == ord('q') or scaled_index == (img_count + start_index):
