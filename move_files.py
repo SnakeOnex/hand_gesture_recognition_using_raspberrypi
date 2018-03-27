@@ -3,15 +3,15 @@ from random import randint
 
 print(os.getcwd())
 
-os.chdir('data/like_dislike/train/like')
+os.chdir('data/like_dislike/train/dislike')
 print(os.getcwd())
 
 filenames = os.listdir()
 print(filenames)
 
-num = 99 
+num = 88 
 
-folder = "test/"
+folder = "dislike_test/"
 
 os.rename(filenames[0], folder + filenames[0])
 print(os.getcwd())
