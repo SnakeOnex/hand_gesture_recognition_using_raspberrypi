@@ -3,7 +3,7 @@ from random import randint
 
 print(os.getcwd())
 
-os.chdir('data2/dislike/')
+os.chdir('data/like_dislike/train/like')
 print(os.getcwd())
 
 filenames = os.listdir()
@@ -20,7 +20,7 @@ print(os.getcwd())
 for i in range(num):
     index = randint(0, len(filenames))
     os.rename(filenames[index], folder + filenames[index])
-    print(f"moved filenames[index]")
+    print("moved: " + str(filenames[index]))
     
     print(len(filenames))
     del(filenames[index])
