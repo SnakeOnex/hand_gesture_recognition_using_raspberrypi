@@ -23,7 +23,7 @@ img_size_flat = img_size * img_size
 img_shape = (img_size, img_size)
 
 num_channels = 1
-num_classes = 2
+num_classes = 6
 
 # conv layer 1
 filter_size1 = 3
@@ -119,7 +119,7 @@ fc_layer1 = create_fully_connected(input=layer_flat,
                                   num_outputs=fc_layer,
                                   use_relu=True)
 
-dropout = tf.layer.dropout(inputs=fc_layer1, rate=0.4, training=False)
+dropout = tf.layers.dropout(inputs=fc_layer1, rate=0.4, training=False)
 
 fc_layer2 = create_fully_connected(input=dropout,
                                   num_inputs=fc_layer,
@@ -137,7 +137,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(cost)
 
 saver = tf.train.Saver()
 
-save_dir = 'checkpoints/onetwo256dropout/'
+save_dir = 'checkpoints/fingersone/'
 
 session = tf.Session()
 
@@ -229,7 +229,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
    # cv2.putText(img, msg, (50, 50), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
-    cv2.putText(img_cropped, msg, (10,10), font, 0.5, (0, 255, 0), 2, cv2.LINE_AA)
+    cv2.putText(img_cropped, str(pred_cls), (10,10), font, 0.5, (0, 255, 0), 2, cv2.LINE_AA)
     
     print(pred)
     #cv2.imshow('RAW', img)
