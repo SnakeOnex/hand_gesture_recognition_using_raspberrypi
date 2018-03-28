@@ -34,7 +34,7 @@ filter_size2 = 3
 num_filters2 = 16
 
 
-fc_layer = 128
+fc_layer = 256 
 
 lr = 0.001
 def create_conv_layer(input, num_input_channels, filter_size, num_filters, use_pooling=True):
@@ -119,7 +119,9 @@ fc_layer1 = create_fully_connected(input=layer_flat,
                                   num_outputs=fc_layer,
                                   use_relu=True)
 
-fc_layer2 = create_fully_connected(input=fc_layer1,
+dropout = tf.layer.dropout(inputs=fc_layer1, rate=0.4, training=False)
+
+fc_layer2 = create_fully_connected(input=dropout,
                                   num_inputs=fc_layer,
                                   num_outputs=num_classes,
                                   use_relu=False)
@@ -135,7 +137,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(cost)
 
 saver = tf.train.Saver()
 
-save_dir = 'checkpoints/2_simple/'
+save_dir = 'checkpoints/onetwo256dropout/'
 
 session = tf.Session()
 
