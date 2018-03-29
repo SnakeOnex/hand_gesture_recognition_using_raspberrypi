@@ -23,7 +23,7 @@ img_size_flat = img_size * img_size
 img_shape = (img_size, img_size)
 
 num_channels = 1
-num_classes = 6
+num_classes = 3
 
 # conv layer 1
 filter_size1 = 3
@@ -38,7 +38,7 @@ filter_size3 = 3
 num_filters3 = 32
 
 
-fc_layer = 256
+fc_layer = 512
 
 lr = 0.001
 def create_conv_layer(input, num_input_channels, filter_size, num_filters, use_pooling=True):
@@ -151,7 +151,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(cost)
 
 saver = tf.train.Saver()
 
-save_dir = 'checkpoints/fingersone/'
+save_dir = 'checkpoints/rpc1/'
 
 session = tf.Session()
 
