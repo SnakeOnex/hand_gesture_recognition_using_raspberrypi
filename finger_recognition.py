@@ -33,8 +33,12 @@ num_filters1 =  8
 filter_size2 = 3
 num_filters2 = 16
 
+# conv layer 3 
+filter_size3 = 3
+num_filters3 = 32
 
-fc_layer = 256 
+
+fc_layer = 256
 
 lr = 0.001
 def create_conv_layer(input, num_input_channels, filter_size, num_filters, use_pooling=True):
@@ -110,7 +114,14 @@ layer_conv2, weights_conv2 = create_conv_layer(input=layer_conv1,
                                               num_filters=num_filters2,
                                               use_pooling=True)
 
-layer_flat, num_features = flatten_layer(layer_conv2)
+layer_conv3, weights_conv3 = create_conv_layer(input=layer_conv2,
+                                              num_input_channels=num_filters2,
+                                              filter_size=filter_size3,
+                                              num_filters=num_filters3,
+                                              use_pooling=True)
+
+
+layer_flat, num_features = flatten_layer(layer_conv3)
 print("Num features: " + str(num_features))
 
 
@@ -125,6 +136,9 @@ fc_layer2 = create_fully_connected(input=dropout,
                                   num_inputs=fc_layer,
                                   num_outputs=num_classes,
                                   use_relu=False)
+
+
+
 
 y_pred = tf.nn.softmax(fc_layer2)
 y_pred_class = tf.argmax(y_pred, axis=1)
