@@ -119,7 +119,7 @@ fc_layer1 = create_fully_connected(input=layer_flat,
                                   num_outputs=fc_layer,
                                   use_relu=True)
 
-dropout = tf.layer.dropout(inputs=fc_layer1, rate=0.4, training=False)
+dropout = tf.layers.dropout(inputs=fc_layer1, rate=0.4, training=False)
 
 fc_layer2 = create_fully_connected(input=dropout,
                                   num_inputs=fc_layer,
@@ -187,7 +187,8 @@ from picamera import PiCamera
 
 image_size = 64
 recognition_ratio = 10
-res = (320, 240)
+cropped_size = 380
+res = (640,480)
 fps = 30
 
 
@@ -210,8 +211,8 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     
 #    img_resized = resize_img(img_gray, img_size)
 
-    img_cropped = crop_img_hor(img_gray, 190)
-    img_cropped = crop_img_ver(img_cropped, 190)
+    img_cropped = crop_img_hor(img_gray, cropped_size)
+    img_cropped = crop_img_ver(img_cropped, cropped_size) 
     img_resized = resize_img(img_cropped, img_size)
     print("RESIZED: " + str(img_resized.shape))
     img_shapened = img_resized.reshape(1, img_size, img_size, 1) 

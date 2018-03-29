@@ -239,9 +239,9 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     if pred_cls[0] == 0:
         msg = "Scissors"
     elif pred_cls[0] == 1:
-        msg = "Rock"
-    elif pred_cls[0] == 2:
         msg = "Paper"
+    elif pred_cls[0] == 2:
+        msg = "Rock"
 
 
    # cv2.putText(img, msg, (50, 50), font, 2, (255, 255, 255), 2, cv2.LINE_AA)

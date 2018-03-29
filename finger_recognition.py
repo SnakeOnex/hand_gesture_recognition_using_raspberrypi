@@ -38,7 +38,7 @@ filter_size3 = 3
 num_filters3 = 32
 
 
-fc_layer = 256
+fc_layer = 512 
 
 lr = 0.001
 def create_conv_layer(input, num_input_channels, filter_size, num_filters, use_pooling=True):
@@ -151,7 +151,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(cost)
 
 saver = tf.train.Saver()
 
-save_dir = 'checkpoints/fingersone/'
+save_dir = 'checkpoints/fingerstwo/'
 
 session = tf.Session()
 
@@ -200,8 +200,9 @@ from picamera import PiCamera
 
 
 image_size = 64
+cropped_size = 380
 recognition_ratio = 10
-res = (320, 240)
+res = (640, 480)
 fps = 30
 
 
@@ -224,8 +225,8 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     
 #    img_resized = resize_img(img_gray, img_size)
 
-    img_cropped = crop_img_hor(img_gray, 190)
-    img_cropped = crop_img_ver(img_cropped, 190)
+    img_cropped = crop_img_hor(img_gray, cropped_size)
+    img_cropped = crop_img_ver(img_cropped, cropped_size) 
     img_resized = resize_img(img_cropped, img_size)
     print("RESIZED: " + str(img_resized.shape))
     img_shapened = img_resized.reshape(1, img_size, img_size, 1) 
@@ -251,7 +252,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
    # cv2.putText(img, msg, (50, 50), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
-    cv2.putText(img_cropped, msg, (10,10), font, 0.5, (0, 255, 0), 2, cv2.LINE_AA)
+    cv2.putText(img_cropped, msg, (30,60), font, 2, (0, 255, 0), 2, cv2.LINE_AA)
     
     print(pred)
     #cv2.imshow('RAW', img)
