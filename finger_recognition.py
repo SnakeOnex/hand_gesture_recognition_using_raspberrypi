@@ -223,13 +223,21 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     font = cv2.FONT_HERSHEY_SIMPLEX
     msg = ""
     if pred_cls[0] == 0:
-        msg = "Like"
-    else:
-        msg = "Dislike"
+        msg = "Two"
+    elif pred_cls[0] == 1:
+        msg = "Five"
+    elif pred_cls[0] == 2:
+        msg = "Zero"
+    elif pred_cls[0] == 3:
+        msg = "Four"
+    elif pred_cls[0] == 4:
+        msg = "Three"
+    elif pred_cls[0] == 5:
+        msg = "One"
 
    # cv2.putText(img, msg, (50, 50), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
-    cv2.putText(img_cropped, str(pred_cls), (10,10), font, 0.5, (0, 255, 0), 2, cv2.LINE_AA)
+    cv2.putText(img_cropped, msg, (10,10), font, 0.5, (0, 255, 0), 2, cv2.LINE_AA)
     
     print(pred)
     #cv2.imshow('RAW', img)
