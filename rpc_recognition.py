@@ -237,17 +237,12 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     font = cv2.FONT_HERSHEY_SIMPLEX
     msg = ""
     if pred_cls[0] == 0:
-        msg = "Two"
+        msg = "Scissors"
     elif pred_cls[0] == 1:
-        msg = "Five"
+        msg = "Rock"
     elif pred_cls[0] == 2:
-        msg = "Zero"
-    elif pred_cls[0] == 3:
-        msg = "Four"
-    elif pred_cls[0] == 4:
-        msg = "Three"
-    elif pred_cls[0] == 5:
-        msg = "One"
+        msg = "Paper"
+
 
    # cv2.putText(img, msg, (50, 50), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
 
