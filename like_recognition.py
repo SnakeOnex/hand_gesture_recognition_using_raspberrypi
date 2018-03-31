@@ -1,4 +1,4 @@
-# importing stuff
+# importování knihoven
 import tensorflow as tf
 import numpy as np
 import cv2
@@ -6,16 +6,10 @@ import math
 import os
 import time
 from scipy import misc
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 
-# loading data params
-PATH = 'data2/'
-
-
-
-
-
-# conv net hyper parameters
-
+# hyperparametry prvni konvolucni site a obrazku
 img_size = 64
 
 img_size_flat = img_size * img_size
@@ -37,6 +31,9 @@ num_filters2 = 16
 fc_layer = 256 
 
 lr = 0.001
+
+# stavba stejneho statickeho computacniho grafu jako pri treninku
+
 def create_conv_layer(input, num_input_channels, filter_size, num_filters, use_pooling=True):
     
     filter_shape = [filter_size, filter_size, num_input_channels, num_filters]
@@ -165,52 +162,48 @@ def crop_img_ver(img, final_width):
     return img_cropped
 
 
-
-def crop_img(img, final_width):
-    left_border = math.floor((img.shape[1] - final_width) / 2)
-    right_border = final_width + left_border
-#     print(left_border)
-#     print(right_border)
-    img_cropped = img[:, left_border:right_border]
-    return img_cropped
-
 def preprocess_imgs(X):
     X = (X / 255 * 0.99) + 0.01
     return X
 
 
+# proměnné určené pro konfiguracu nahrávacího procesu
 
-
-from picamera.array import PiRGBArray
-from picamera import PiCamera
-
-
+# velikost stran obrázku, který bude použit jako vstup do neuronove site
 image_size = 64
+
+# poměr klasifikovaných snímků = každý pátý snímek bude použit jako vstup do neuronove site
 recognition_ratio = 10
 cropped_size = 380
+
+# rozlišení ve kterém bude kamera nahrávat
 res = (640,480)
+
+# frekvence snimku
 fps = 30
 
 
-# initialize the cam
+# inicializace kamery
 camera = PiCamera()
 camera.resolution = res
 camera.framerate = fps
 rawCapture = PiRGBArray(camera, size=res)
 
-# allow the camera to warmup
+# zastavení programu pro 0.1 sekundy, aby se kamera mohlo rozehřát
 time.sleep(0.1)
 
-# capture frames from the camera
+# slouží k nahrávání obrázků do předem určené složky
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
 
-    # current frame as numpy array
+
+    # aktuální snímek jako numpy pole
     img = frame.array
 
+    # převede snímek z RGB do grayscale
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
-#    img_resized = resize_img(img_gray, img_size)
 
+    # ořízne obrázek tak aby jeho rozlišení byle cropped_size x _cropped_size
     img_cropped = crop_img_hor(img_gray, cropped_size)
     img_cropped = crop_img_ver(img_cropped, cropped_size) 
     img_resized = resize_img(img_cropped, img_size)
@@ -219,17 +212,21 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
     img_scaled = preprocess_imgs(img_shapened)
 
-    pred_cls = session.run(y_pred_class, feed_dict={x: img_scaled})
-    pred = session.run(y_pred, feed_dict={x: img_scaled})
-    font = cv2.FONT_HERSHEY_SIMPLEX
+    pred_cls = 0
+    pred = 0
+    if i % capture_ratio == 0:
+        pred_cls = session.run(y_pred_class, feed_dict={x: img_scaled})
+        pred = session.run(y_pred, feed_dict={x: img_scaled})
+
     msg = ""
     if pred_cls[0] == 0:
         msg = "PALEC NAHORU"
     else:
         msg = "PALEC DOLU"
 
-   # cv2.putText(img, msg, (50, 50), font, 2, (255, 255, 255), 2, cv2.LINE_AA)
-
+    # nastavení písma pro zobrazení textu na obrázku na displeji
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    
     cv2.putText(img_cropped, msg, (0,50), font, 1.5, (0, 255, 0), 2, cv2.LINE_AA)
     
     print(pred)
