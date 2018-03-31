@@ -128,7 +128,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     cv2.putText(img_cropped, "RECORDING",(40, 30),font, 0.4, (0,255,0), 2, cv2.LINE_AA)
     
 	# ukáže snímek na displeji
-    cv2.imshow("frame", img_cropped)
+    cv2.imshow("cropped", img_cropped)
     
     # zaznamenává stisknutí klávesy
     key = cv2.waitKey(1) & 0xFF
