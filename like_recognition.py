@@ -173,7 +173,7 @@ def preprocess_imgs(X):
 image_size = 64
 
 # poměr klasifikovaných snímků = každý pátý snímek bude použit jako vstup do neuronove site
-recognition_ratio = 10
+recognition_ratio = 4 
 cropped_size = 380
 
 # rozlišení ve kterém bude kamera nahrávat
@@ -183,7 +183,7 @@ res = (640,480)
 fps = 30
 
 
-# inicializace kamery
+# inicializace kamery0
 camera = PiCamera()
 camera.resolution = res
 camera.framerate = fps
@@ -192,6 +192,10 @@ rawCapture = PiRGBArray(camera, size=res)
 # zastavení programu pro 0.1 sekundy, aby se kamera mohlo rozehřát
 time.sleep(0.1)
 
+
+
+pred_cls = [0]
+i = 0 
 # slouží k nahrávání obrázků do předem určené složky
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
 
@@ -212,9 +216,9 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
 
     img_scaled = preprocess_imgs(img_shapened)
 
-    pred_cls = 0
+    
     pred = 0
-    if i % capture_ratio == 0:
+    if i % recognition_ratio == 0:
         pred_cls = session.run(y_pred_class, feed_dict={x: img_scaled})
         pred = session.run(y_pred, feed_dict={x: img_scaled})
 
@@ -234,7 +238,7 @@ for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     cv2.imshow('RAW', img_cropped)
     key = cv2.waitKey(1) & 0xFF 
     rawCapture.truncate(0)
-
+    i += 1
     if key == ord('q'):
         print("FJDASLFJASLFJDASLF")
         break
