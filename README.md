@@ -12,7 +12,7 @@ The **image_recorder.py** file serves the purpose of recording a lot of images i
 
 ## 2. Training the model
 
-Files **like_****dislike.py**, **rock_paper_scissors.py** and **fingers.py** serve the purpose of training a tensorflow model to recognise their individual set of images.
+Files **like_dislike.py**, **rock_paper_scissors.py** and **fingers.py** serve the purpose of training a tensorflow model to recognise their individual set of images.
 
 ## 3. Recognising gestures from live video
 
