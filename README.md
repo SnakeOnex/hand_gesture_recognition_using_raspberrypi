@@ -16,4 +16,16 @@ Files **like_dislike.py**, **rock_paper_scissors.py** and **fingers.py** serve t
 
 ## 3. Recognising gestures from live video
 
-Files <gesture-name>_recognition.py are for live recognition of certain gesture from live video feed from RaspberryPi Camera.
+Files **\<gesture-name\>**_recognition.py are for live recognition (using the trained models from step 2) of certain gesture from live video feed from RaspberryPi Camera.
+
+## Used Technologies
+
+- Tensorflow
+- OpenCV
+- scipy
+
+
+## Video demonstration
+
+[![Video demonstration](https://i.imgur.com/O9x4vO9.png)](https://www.youtube.com/watch?v=OBWjdnMJSWE)
+
